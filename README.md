@@ -1,10 +1,10 @@
 # lighthouse
 
-Equivalence & Boundary Testing
-Function Testing
-Use case testing
-Load testing
-Penetration testing
+### Equivalence & Boundary Testing
+### Function Testing
+### Use case testing
+### Load testing
+### Penetration testing
 
 
 Found issues:

@@ -1,0 +1,993 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+
+    <!-- begin _includes/seo.html --><title>Streaming a video with Media Source Extensions - Axel Isouard</title>
+    <meta name="description"
+          content="Embedding a video inside a web page has been simple since the release of the HTML5 specification. This article will show you how to inject a partial video inside the player. ">
+
+
+    <meta name="author" content="Axel Isouard">
+
+
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Axel Isouard">
+    <meta property="og:title" content="Streaming a video with Media Source Extensions">
+    <meta property="og:url"
+          content="https://axel.isouard.fr/blog/2016/05/24/streaming-webm-video-over-html5-with-media-source">
+
+
+    <meta property="og:description"
+          content="Embedding a video inside a web page has been simple since the release of the HTML5 specification. This article will show you how to inject a partial video inside the player. ">
+
+
+    <meta property="og:image"
+          content="https://axel.isouard.fr/assets/images/posts/webm-streaming/webm-streaming-header.jpg">
+
+
+    <meta name="twitter:site" content="@aisouard">
+    <meta name="twitter:title" content="Streaming a video with Media Source Extensions">
+    <meta name="twitter:description"
+          content="Embedding a video inside a web page has been simple since the release of the HTML5 specification. This article will show you how to inject a partial video inside the player. ">
+    <meta name="twitter:url"
+          content="https://axel.isouard.fr/blog/2016/05/24/streaming-webm-video-over-html5-with-media-source">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image"
+          content="https://axel.isouard.fr/assets/images/posts/webm-streaming/webm-streaming-header.jpg">
+
+
+    <meta property="article:published_time" content="2016-05-24T00:00:00+00:00">
+
+
+    <link rel="canonical"
+          href="https://axel.isouard.fr/blog/2016/05/24/streaming-webm-video-over-html5-with-media-source">
+
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Axel Isouard",
+            "url": "https://axel.isouard.fr/",
+            "sameAs": [
+                "https://twitter.com/aisouard",
+                "https://www.linkedin.com/in/axelisouard"
+            ]
+        }
+    </script>
+
+
+    <!-- end _includes/seo.html -->
+
+
+    <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Axel Isouard Feed">
+
+    <!-- https://t.co/dKP3o1e -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+        document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+    </script>
+
+    <!-- For all browsers -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+
+    <!--[if IE]>
+    <style>
+        /* old IE unsupported flexbox fixes */
+        .greedy-nav .site-title {
+            padding-right: 3em;
+        }
+
+        .greedy-nav button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+        }
+    </style>
+    <![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+    <!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+    <!-- end custom head snippets -->
+
+</head>
+
+<body class="layout--single wide">
+<nav class="skip-links">
+    <h2 class="screen-reader-text">Skip links</h2>
+    <ul>
+        <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+        <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+        <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+    </ul>
+</nav>
+
+<!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please
+    <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.
+</div>
+<![endif]-->
+
+
+<div class="masthead">
+    <div class="masthead__inner-wrap">
+        <div class="masthead__menu">
+            <nav id="site-nav" class="greedy-nav">
+
+                <a class="site-title" href="/">
+                    Blog
+
+                </a>
+                <ul class="visible-links">
+                    <li class="masthead__menu-item">
+                        <a href="/portfolio">Portfolio</a>
+                    </li>
+                </ul>
+
+                <button class="search__toggle" type="button">
+                    <span class="visually-hidden">Toggle search</span>
+                    <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+                        <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z"
+                              transform="translate(-.01)"></path>
+                    </svg>
+                </button>
+
+                <button class="greedy-nav__toggle hidden" type="button">
+                    <span class="visually-hidden">Toggle menu</span>
+                    <div class="navicon"></div>
+                </button>
+                <ul class="hidden-links hidden"></ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+<div class="initial-content">
+
+
+    <div class="page__hero--overlay"
+         style=" background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/assets/images/posts/webm-streaming/webm-streaming-header.jpg');"
+    >
+
+        <div class="wrapper">
+            <h1 id="page-title" class="page__title" itemprop="headline">
+
+                Streaming a video with Media Source Extensions
+
+
+            </h1>
+
+            <p class="page__lead">Embedding a video inside a web page has been simple since the release of the HTML5
+                specification. This article will show you how to inject a partial video inside the player.
+            </p>
+
+
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i>
+
+
+                8 minute read
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+    <div id="main" role="main">
+
+        <div class="sidebar sticky">
+
+
+            <div itemscope itemtype="https://schema.org/Person">
+
+
+                <div class="author__avatar">
+
+                    <img src="/assets/images/bio-photo.jpg" alt="Axel Isouard" itemprop="image">
+
+                </div>
+
+
+                <div class="author__content">
+
+                    <h3 class="author__name" itemprop="name">Axel Isouard</h3>
+
+
+                    <div class="author__bio" itemprop="description">
+                        <p>Passionate and versatile software engineer, with great concern for the product’s efficiency
+                            and security. <br/> Also coffee addict.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="author__urls-wrapper">
+                    <button class="btn btn--inverse">Follow</button>
+                    <ul class="author__urls social-icons">
+
+                        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+                            <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Alicante, Spain</span>
+                        </li>
+
+
+                        <li><a href="http://axel.isouard.fr" rel="nofollow noopener noreferrer"><i
+                                class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Website</span></a>
+                        </li>
+
+
+                        <li><a href="https://twitter.com/aisouard" rel="nofollow noopener noreferrer"><i
+                                class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span
+                                class="label">Twitter</span></a></li>
+
+
+                        <li><a href="https://github.com/aisouard" rel="nofollow noopener noreferrer"><i
+                                class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a>
+                        </li>
+
+
+                        <li><a href="https://instagram.com/axl.is" rel="nofollow noopener noreferrer"><i
+                                class="fab fa-fw fa-instagram" aria-hidden="true"></i><span
+                                class="label">Instagram</span></a></li>
+
+
+                        <li><a href="https://www.strava.com/athletes/51918519" rel="nofollow noopener noreferrer"><i
+                                class="fab fa-fw fa-strava orange" aria-hidden="true"></i><span
+                                class="label">Strava</span></a></li>
+
+
+                        <!--
+                    <li>
+                      <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+                        <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+                      </a>
+                    </li>
+                  -->
+                    </ul>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+            <meta itemprop="headline" content="Streaming a video with Media Source Extensions">
+            <meta itemprop="description"
+                  content="Embedding a video inside a web page has been simple since the release of the HTML5 specification. This article will show you how to inject a partial video inside the player.">
+            <meta itemprop="datePublished" content="2016-05-24T00:00:00+00:00">
+
+
+            <div class="page__inner-wrap">
+
+
+                <section class="page__content" itemprop="text">
+
+                    <p>Back in the 2000’s, playing videos on a web page was truly a mess. The audience
+                        needed to install plugins such as RealPlayer, or just cross fingers while
+                        waiting for the video to show up inside a Windows Media Player canvas. YouTube
+                        has proven us that Adobe Flash was great for it’s time to stream media. Since
+                        then, embedding videos became a less painful task than ever.</p>
+
+                    <p>Today, the HTML5 specification allows us to embed a video on a web page, like
+                        if we want to embed a picture.</p>
+
+                    <figure class="highlight">
+                        <pre><code class="language-html" data-lang="html"><span class="nt">&lt;video</span> <span
+                                class="na">width=</span><span class="s">"640"</span> <span class="na">src=</span><span
+                                class="s">"video.webm"</span><span class="nt">&gt;&lt;/video&gt;</span></code></pre>
+                    </figure>
+
+                    <p>
+                        <video width="640" controls="">
+                            <source src="/assets/images/posts/webm-streaming/mov_bbb.mp4" type="video/mp4"/>
+                            <source src="/assets/images/posts/webm-streaming/mov_bbb.ogg" type="video/ogg"/>
+                            Your browser does not support HTML5 video.
+                        </video>
+                    </p>
+
+                    <p>But the URL specified inside the <code class="language-plaintext highlighter-rouge">src</code>
+                        attribute must lead to a complete video
+                        file. What if we’d want to stream a video by directly injecting it’s binary
+                        data right inside the player, just like that ?</p>
+
+                    <p>
+                        <button id="addNextSegmentBtn" class="btn btn--disabled">Loading...</button>
+                    </p>
+                    <p>
+                        <video id="player" style="background-color: black" width="640" controls="">
+                        </video>
+                    </p>
+
+                    <script type="text/javascript">
+                        var button;
+                        var player;
+
+                        var sourceBuffer;
+                        var mediaSource;
+
+                        var currentSegment = 0;
+
+                        window.addEventListener('load', function () {
+                            button = document.getElementById('addNextSegmentBtn');
+                            button.addEventListener('click', onAddNextSegmentBtnClick);
+
+                            mediaSource = new MediaSource();
+                            mediaSource.addEventListener('sourceopen', mediaSourceOpen);
+
+                            player = document.getElementById('player');
+                            player.src = window.URL.createObjectURL(mediaSource);
+                        });
+
+                        function onAddNextSegmentBtnClick() {
+                            ga('send', {
+                                hitType: 'event',
+                                eventCategory: 'MediaSourceDemo',
+                                eventAction: 'AddNextSegmentBtnClick',
+                                eventValue: currentSegment
+                            });
+
+                            if (currentSegment > 4) {
+                                return;
+                            }
+
+                            button.className = 'btn btn--disabled';
+                            button.innerHTML = 'Please wait...';
+                            fetchNextSegment('media_000' + currentSegment++ + '.segment', function (bytes) {
+                                sourceBuffer.appendBuffer(bytes);
+                            });
+                        }
+
+                        function mediaSourceOpen() {
+                            var mimeType = 'video/webm; codecs="vorbis,vp9"';
+
+                            ga('send', {
+                                hitType: 'event',
+                                eventCategory: 'MediaSourceDemo',
+                                eventAction: 'MediaSourceOpen'
+                            });
+
+                            sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+                            sourceBuffer.addEventListener('updateend', function () {
+                                ga('send', {
+                                    hitType: 'event',
+                                    eventCategory: 'MediaSourceDemo',
+                                    eventAction: 'MediaSourceUpdateEnd',
+                                    eventValue: currentSegment
+                                });
+                                if (currentSegment > 4) {
+                                    mediaSource.endOfStream();
+                                    button.className = 'btn btn--disabled';
+                                    button.innerHTML = 'Loading complete';
+                                    return;
+                                }
+                                button.className = 'btn';
+                                button.innerHTML = 'Click to add the next segment (' + currentSegment +
+                                    ' of 5)';
+                            });
+
+                            fetchNextSegment('init.segment', function (bytes) {
+                                sourceBuffer.appendBuffer(bytes);
+                            });
+                        }
+
+                        function fetchNextSegment(filename, cb) {
+                            var req = new XMLHttpRequest();
+
+                            req.open('get', '/assets/images/posts/webm-streaming/' + filename, true);
+                            req.onload = function (e) {
+                                cb(new Uint8Array(req.response));
+                            };
+                            req.responseType = 'arraybuffer';
+                            req.send();
+                        }
+                    </script>
+
+                    <p>According to the <a
+                            href="https://developer.mozilla.org/en-US/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video#Streaming_Protocols">MDN
+                        website</a>, the <code class="language-plaintext highlighter-rouge">src</code> attribute
+                        supports the <em>RTMP</em>
+                        protocol, which was used by <em>Adobe Flash</em> to stream videos on YouTube. That
+                        wasn’t enough for my graduation project involving video streaming over a
+                        peer-to-peer network between web browsers.</p>
+
+                    <figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span
+                            class="c1">// Because I was looking for something THAT simple...</span>
+<span class="kd">var</span> <span class="nx">player</span> <span class="o">=</span> <span
+                                class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span
+                                class="p">(</span><span class="dl">'</span><span class="s1">player</span><span
+                                class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">new</span> <span
+                                class="nb">Uint8Array</span><span class="p">([</span><span class="mh">0x1F</span><span
+                                class="p">,</span> <span class="mh">0x6B</span><span class="p">,</span> <span class="p">...]);</span>
+
+<span class="nx">player</span><span class="p">.</span><span class="nx">appendBytes</span><span class="p">(</span><span
+                                class="nx">data</span><span class="p">);</span></code></pre>
+                    </figure>
+
+                    <h2 id="create-a-media-source-object">Create a Media Source object</h2>
+
+                    <p>The HTML5 Media element does not provide a way to do it directly. YouTube uses
+                        the <em>Media Source Extensions (MSE)</em> API to replace the behavior of their old
+                        flash video player. It simply takes the place of the file URL as the <code
+                                class="language-plaintext highlighter-rouge">src</code>
+                        attribute on your <code class="language-plaintext highlighter-rouge">&lt;video&gt;</code>
+                        element and gives you the possibility to inject the
+                        media’s data like that:</p>
+
+                    <figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span
+                            class="kd">var</span> <span class="nx">mediaSource</span> <span class="o">=</span> <span
+                            class="k">new</span> <span class="nx">MediaSource</span><span class="p">();</span>
+<span class="nx">mediaSource</span><span class="p">.</span><span class="nx">addEventListener</span><span
+                                class="p">(</span><span class="dl">'</span><span class="s1">sourceopen</span><span
+                                class="dl">'</span><span class="p">,</span> <span class="nx">mediaSourceOpen</span><span
+                                class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">player</span> <span class="o">=</span> <span
+                                class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span
+                                class="p">(</span><span class="dl">'</span><span class="s1">player</span><span
+                                class="dl">'</span><span class="p">);</span>
+<span class="nx">player</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span
+                                class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span
+                                class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span
+                                class="nx">mediaSource</span><span class="p">);</span></code></pre>
+                    </figure>
+
+                    <h2 id="add-a-source-buffer">Add a Source Buffer</h2>
+
+                    <p>Your video’s <code class="language-plaintext highlighter-rouge">src</code> attribute has been
+                        replaced with a generated URL, the web
+                        browser will no longer try to retrieve the video file remotely, but it will
+                        listen to the attached <em>Source Buffers</em> instead. These buffers are appended to
+                        the <em>Media Source</em> object and filled with binary data from the video we want to
+                        stream. A <em>Source Buffer</em> must be created upon initialization by telling which
+                        media format and codecs we’re going to use.</p>
+
+                    <figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span
+                            class="kd">var</span> <span class="nx">sourceBuffer</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">mediaSourceOpen</span><span class="p">()</span> <span
+                                class="p">{</span>
+  <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">new</span> <span
+                                class="nb">Uint8Array</span><span class="p">([</span><span class="mh">0x1F</span><span
+                                class="p">,</span> <span class="mh">0x9A</span><span class="p">,</span> <span
+                                class="mh">0x3B</span><span class="p">,</span> <span class="p">...]);</span>
+  <span class="kd">var</span> <span class="nx">mimeType</span> <span class="o">=</span> <span class="dl">'</span><span
+                                class="s1">video/webm; codecs="vorbis,vp9"</span><span class="dl">'</span><span
+                                class="p">;</span>
+
+  <span class="nx">sourceBuffer</span> <span class="o">=</span> <span class="nx">mediaSource</span><span
+                                class="p">.</span><span class="nx">addSourceBuffer</span><span class="p">(</span><span
+                                class="nx">mimeType</span><span class="p">);</span>
+  <span class="nx">sourceBuffer</span><span class="p">.</span><span class="nx">appendBuffer</span><span
+                                class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+                    </figure>
+
+                    <h2 id="find-the-right-data">Find the right data</h2>
+
+                    <p>The video should play, but it doesn’t. Everything here is correct, except the
+                        most important thing: the data we are transmitting. You might expect that we
+                        could just split the video file as we want, but if you take a look at the
+                        <a href="https://w3c.github.io/media-source/index.html">Media Source Extensions</a>
+                        specification, you’ll notice that this API
+                        is very fragile and will break on the first mistake it will find
+                        inside the data you’ll transmit.</p>
+
+                    <p>Our Source Buffer will take two kinds of data as input:</p>
+
+                    <ul>
+                        <li>Initialization Segment, the first slice of video we have to send, this
+                            tells our player about the video resolution, duration, bitrate, …
+                        </li>
+                        <li>Media Segment, the next slices containing the images and audio data to
+                            play.
+                        </li>
+                    </ul>
+
+                    <p>These segments must be structured accordingly to the
+                        <a href="https://w3c.github.io/media-source/byte-stream-format-registry.html#registry">MSE Byte
+                            Stream Format Registry</a>. Only a few media formats and audio/video
+                        codecs are supported. We will work with the <em>WebM</em> media format as it’s more
+                        used and easier to work with than the <em>MP4</em> one, which I will write about
+                        later in another post.</p>
+
+                    <figure>
+                        <a href="/assets/images/posts/webm-streaming/youtube-webm-chunk.png">
+                            <img src="/assets/images/posts/webm-streaming/youtube-webm-chunk.png"/>
+                        </a>
+                        <figcaption>Receiving a WebM Media Segment from YouTube</figcaption>
+                    </figure>
+
+                    <h2 id="encode-the-video">Encode the video</h2>
+
+                    <p>MSE supports the <em>WebM</em> format with <em>VP8</em> and <em>VP9</em> video codecs and Vorbis
+                        audio codec. We’ll use the popular <em>FFmpeg</em> tool in order to encode the video
+                        properly, then we’ll have to remux it so we can retrieve the needed segments.</p>
+
+                    <p>Here’s the command line I’ve been using all the time to convert a video to the
+                        WebM format with the <em>VP9</em> video codec and the <em>Vorbis</em> audio codec:</p>
+
+                    <figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span
+                            class="nv">$ </span>ffmpeg <span class="nt">-i</span> movie.avi <span class="nt">-c</span>:v libvpx-vp9 <span
+                            class="nt">-b</span>:v 8000k <span class="nt">-tile-columns</span> 4 <span
+                            class="se">\</span>
+         <span class="nt">-frame-parallel</span> 1 <span class="nt">-keyint_min</span> 90 <span class="nt">-g</span> 90 <span
+                                class="nt">-f</span> webm <span class="nt">-dash</span> 1 <span class="se">\</span>
+         <span class="nt">-c</span>:a libvorbis <span class="nt">-b</span>:a 64K movie.webm</code></pre>
+                    </figure>
+
+                    <p>You should keep the <code class="language-plaintext highlighter-rouge">-tile-columns</code> and
+                        <code class="language-plaintext highlighter-rouge">-frame-parallel</code> flags as they are,
+                        to enable multi-threaded encoding. The <code class="language-plaintext highlighter-rouge">-keyint_min</code>
+                        and <code class="language-plaintext highlighter-rouge">-g</code> flags define the
+                        length of your media segments. They represent the “GOP” which stands for Group
+                        Of Pictures.</p>
+
+                    <p>Assuming that the video’s framerate is set to 30 frames per seconds, we’ll
+                        end up with media segments lasting 3 seconds each. That’s the only way to
+                        define each media segment length, since it’s the encoder’s job to split the
+                        video for the Media Source Extensions API.</p>
+
+                    <p>Once the encoding process is finished, we need to generate the seeks table
+                        (which is similar to a <em>table of contents</em>) at the beginning of the file
+                        (since FFmpeg won’t go back and rewrite the beginning of the file after the
+                        process). It must be present inside the initialization segment, in order to
+                        let the player know the which media segment should be played at the time we
+                        are seeking.</p>
+
+                    <p>For that, you have to grab and compile the <a href="https://github.com/webmproject/libwebm">sample_muxer
+                        tool</a> and run the
+                        following command:</p>
+
+                    <figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span
+                            class="nv">$ </span>sample_muxer <span class="nt">-i</span> movie.webm <span
+                            class="nt">-o</span> movie_muxed.webm <span class="nt">-output_cues</span> 1 <span
+                            class="se">\</span>
+               <span class="nt">-cues_before_clusters</span> 1</code></pre>
+                    </figure>
+
+                    <h2 id="read-the-data">Read the data</h2>
+
+                    <p>Our movie is now ready to be streamed over the web. It’s time to read the
+                        binary data inside and extract the segments.</p>
+
+                    <p>Before that, you need to learn about your video’s file format. WebM files are
+                        similar to MKV files, they are both using the EBML format which is short for
+                        Extensible Binary Meta Language. The structure is a little like XML, except
+                        that this time, it’s not a human-readable format.</p>
+
+                    <p>The following code shows how it would look like if it was:</p>
+
+                    <figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- begin of the Initialization Segment --&gt;</span>
+<span class="nt">&lt;Ebml</span> <span class="na">offset=</span><span class="s">"0"</span> <span
+                                class="na">ebml-id=</span><span class="s">"0x1A45DFA3"</span> <span
+                                class="na">size=</span><span class="s">"43"</span> <span
+                                class="na">data-size=</span><span class="s">"31"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Version</span> <span class="na">offset=</span><span class="s">"12"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x4286"</span> <span class="na">size=</span><span class="s">"4"</span> <span
+                                class="na">data-size=</span><span class="s">"1"</span><span class="nt">&gt;</span>1<span
+                                class="nt">&lt;/Version&gt;</span>
+  <span class="nt">&lt;ReadVersion</span> <span class="na">offset=</span><span class="s">"16"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x42F7"</span> <span class="na">size=</span><span class="s">"4"</span> <span
+                                class="na">data-size=</span><span class="s">"1"</span><span class="nt">&gt;</span>1<span
+                                class="nt">&lt;/ReadVersion&gt;</span>
+  <span class="nt">&lt;MaxIDLength</span> <span class="na">offset=</span><span class="s">"20"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x42F2"</span> <span class="na">size=</span><span class="s">"4"</span> <span
+                                class="na">data-size=</span><span class="s">"1"</span><span class="nt">&gt;</span>4<span
+                                class="nt">&lt;/MaxIDLength&gt;</span>
+  <span class="nt">&lt;MaxSizeLength</span> <span class="na">offset=</span><span class="s">"24"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x42F3"</span> <span class="na">size=</span><span class="s">"4"</span> <span
+                                class="na">data-size=</span><span class="s">"1"</span><span class="nt">&gt;</span>8<span
+                                class="nt">&lt;/MaxSizeLength&gt;</span>
+  <span class="nt">&lt;DocType</span> <span class="na">offset=</span><span class="s">"28"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x4282"</span> <span class="na">size=</span><span class="s">"7"</span> <span
+                                class="na">data-size=</span><span class="s">"4"</span><span
+                                class="nt">&gt;</span>webm<span class="nt">&lt;/DocType&gt;</span>
+  <span class="nt">&lt;DocTypeVersion</span> <span class="na">offset=</span><span class="s">"35"</span> <span
+                                class="na">ebml-id=</span><span class="s">"0x4287"</span> <span
+                                class="na">size=</span><span class="s">"4"</span> <span
+                                class="na">data-size=</span><span class="s">"1"</span><span class="nt">&gt;</span>2<span
+                                class="nt">&lt;/DocTypeVersion&gt;</span>
+  <span class="nt">&lt;DocTypeReadVersion</span> <span class="na">offset=</span><span class="s">"39"</span> <span
+                                class="na">ebml-id=</span><span class="s">"0x4285"</span> <span
+                                class="na">size=</span><span class="s">"4"</span> <span
+                                class="na">data-size=</span><span class="s">"1"</span><span class="nt">&gt;</span>2<span
+                                class="nt">&lt;/DocTypeReadVersion&gt;</span>
+<span class="nt">&lt;/Ebml&gt;</span>
+<span class="nt">&lt;Segment</span> <span class="na">offset=</span><span class="s">"43"</span> <span
+                                class="na">ebml-id=</span><span class="s">"0x18538067"</span> <span
+                                class="na">size=</span><span class="s">"1448"</span> <span
+                                class="na">data-size=</span><span class="s">"1436"</span><span class="nt">&gt;</span>
+  ...
+  <span class="nt">&lt;Void</span> <span class="na">offset=</span><span class="s">"124"</span> <span
+                                class="na">ebml-id=</span><span class="s">"0x6C"</span> <span
+                                class="na">size=</span><span class="s">"158"</span> <span
+                                class="na">data-size=</span><span class="s">"149"</span><span class="nt">&gt;</span>(149 bytes)<span
+                                class="nt">&lt;/Void&gt;</span>
+  <span class="nt">&lt;Info</span> <span class="na">offset=</span><span class="s">"282"</span> <span
+                                class="na">ebml-id=</span><span class="s">"0x1549A966"</span> <span
+                                class="na">size=</span><span class="s">"81"</span> <span
+                                class="na">data-size=</span><span class="s">"69"</span><span
+                                class="nt">&gt;</span>...<span class="nt">&lt;/Info&gt;</span>
+  <span class="nt">&lt;Tracks</span> <span class="na">offset=</span><span class="s">"363"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x1654AE6B"</span> <span class="na">size=</span><span class="s">"133"</span> <span
+                                class="na">data-size=</span><span class="s">"121"</span><span
+                                class="nt">&gt;</span>...<span class="nt">&lt;/Tracks&gt;</span>
+  <span class="c">&lt;!-- end of the Initialization Segment --&gt;</span>
+
+  <span class="c">&lt;!-- begin of the first Media Segment --&gt;</span>
+  <span class="nt">&lt;Cluster</span> <span class="na">offset=</span><span class="s">"700"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x1F43B675"</span> <span class="na">size=</span><span class="s">"766"</span> <span
+                                class="na">data-size=</span><span class="s">"754"</span><span class="nt">&gt;&lt;/Cluster&gt;</span>
+  <span class="c">&lt;!-- end of the first Media Segment --&gt;</span>
+
+  <span class="c">&lt;!-- begin of the second Media Segment --&gt;</span>
+  <span class="nt">&lt;Cluster</span> <span class="na">offset=</span><span class="s">"1466"</span> <span class="na">ebml-id=</span><span
+                                class="s">"0x1F43B675"</span> <span class="na">size=</span><span class="s">"766"</span> <span
+                                class="na">data-size=</span><span class="s">"754"</span><span class="nt">&gt;&lt;/Cluster&gt;</span>
+  <span class="c">&lt;!-- end of the second Media Segment --&gt;</span>
+  ...
+<span class="nt">&lt;/Ebml&gt;</span></code></pre>
+                    </figure>
+
+                    <p>Reading the <a
+                            href="https://w3c.github.io/media-source/webm-byte-stream-format.html#webm-init-segments">WebM
+                        Byte Stream Format</a> is also necessary to understand which
+                        kind of data we should append to the Media Source buffer. The specification
+                        tells us that the <em>Initialization Segment</em> must start with an <em>EBML</em> element
+                        followed by a <em>Segment</em> element, which must include a <em>Segment Information</em>
+                        and <em>Tracks</em> element.</p>
+
+                    <p>Instead of writing a full-featured parser, we can simply read as many bytes as
+                        necessary until we stumble upon a <em>Cluster</em> element header, which is the
+                        beginning of our first <em>Media Segment</em>.</p>
+
+                    <p>Let’s make that process easy by opening the video file with a hexadecimal
+                        editor. <a href="https://wiki.gnome.org/Apps/Ghex">GHex</a> is my favourite one under Linux, <a
+                                href="https://mh-nexus.de/en/hxd">HxD</a> is also a good one
+                        under Windows and <a href="http://ridiculousfish.com/hexfiend">Hex Fiend</a> should be more than
+                        enough for your Mac.</p>
+
+                    <figure>
+                        <a href="/assets/images/posts/webm-streaming/webm-hex-header.png">
+                            <img src="/assets/images/posts/webm-streaming/webm-hex-header.png"/>
+                        </a>
+                        <figcaption>WebM file inside a hexadecimal editor</figcaption>
+                    </figure>
+
+                    <p>By reading the <a href="https://www.matroska.org/technical/specs/index.html">EBML
+                        specification</a>, we can figure out that the first
+                        bytes <code class="language-plaintext highlighter-rouge">1A 45 DF A3</code> represent the <em>EBML</em>
+                        tag. This tag is the beginning of our
+                        Initialization Segment, the binary data is likely to be the same after every
+                        encoding process, we shouldn’t bother parsing the tag’s contents and skip it
+                        instead by moving 31 bytes forward as written in the tag’s length.</p>
+
+                    <figure>
+                        <a href="/assets/images/posts/webm-streaming/webm-hex-segment.png">
+                            <img src="/assets/images/posts/webm-streaming/webm-hex-segment.png"/>
+                        </a>
+                        <figcaption>Segment element</figcaption>
+                    </figure>
+
+                    <p>The next tag is the Segment tag, containing some valuable information for our
+                        video player, such as the video’s resolution, duration, bitrate and
+                        codec-related stuff. It also contains every <em>Cluster</em> tags, which happen to be
+                        our Media Segments until the very end of the file.</p>
+
+                    <p>It would have been much easier if the <em>Cluster</em> tags could be located outside
+                        that <em>Segment</em> one, but this time, we will have to dig inside it and skip
+                        everything until we hit the first <em>Cluster</em> tag.</p>
+
+                    <p>Reading EBML tags is not straightforward, <a
+                            href="https://gist.github.com/aisouard/4ffc0bd2b992cf65e432e86d8471b83c">here’s the
+                        function</a> I’ve been
+                        using to parse every EBML tags and get their length. <em>I’m currently finishing
+                            my EBML parser written in JavaScript with the Node.js framework, feel free to
+                            <a href="https://twitter.com/aisouard">follow me on Twitter</a> to get an update once it’s
+                            done.</em></p>
+
+                    <h2 id="send-the-segments">Send the segments</h2>
+
+                    <p>Once we got everything we need, we can finally proceed to the most exciting
+                        part, which is seeing everything working perfectly. We just have to take the
+                        source code at the top of this blog post, and inject our Initialization Segment.</p>
+
+                    <figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span
+                            class="kd">var</span> <span class="nx">initSegment</span> <span class="o">=</span> <span
+                            class="nx">retrieveInitSegment</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">sourceBuffer</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">mediaSourceOpen</span><span class="p">()</span> <span
+                                class="p">{</span>
+  <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">new</span> <span
+                                class="nb">Uint8Array</span><span class="p">(</span><span
+                                class="nx">initSegment</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">mimeType</span> <span class="o">=</span> <span class="dl">'</span><span
+                                class="s1">video/webm; codecs="vorbis,vp9"</span><span class="dl">'</span><span
+                                class="p">;</span>
+
+  <span class="nx">sourceBuffer</span> <span class="o">=</span> <span class="nx">mediaSource</span><span
+                                class="p">.</span><span class="nx">addSourceBuffer</span><span class="p">(</span><span
+                                class="nx">mimeType</span><span class="p">);</span>
+  <span class="nx">sourceBuffer</span><span class="p">.</span><span class="nx">appendBuffer</span><span
+                                class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+                    </figure>
+
+                    <p>Depending on your web browser, the video player might be blank and show a
+                        black picture, waiting for the first Media Segment to be appended. But you
+                        can’t append one segment after another, otherwise, the Source Buffer will
+                        throw an error and the media player will crash.</p>
+
+                    <p>The Source Buffer emits an event before and after updating, you have to wait
+                        until it fires the <code class="language-plaintext highlighter-rouge">updateend</code> event
+                        before appending another Media Segment.</p>
+
+                    <figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span
+                            class="kd">var</span> <span class="nx">mediaSegments</span> <span class="o">=</span> <span
+                            class="p">[];</span>
+
+<span class="kd">function</span> <span class="nx">addMediaSegment</span><span class="p">(</span><span
+                                class="nx">bytes</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">mediaSegments</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span
+                                class="nx">bytes</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">onUpdateEnd</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mediaSegments</span><span
+                                class="p">.</span><span class="nx">length</span><span class="p">)</span> <span
+                                class="p">{</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">sourceBuffer</span><span class="p">.</span><span class="nx">appendBuffer</span><span
+                                class="p">(</span><span class="nx">mediaSegments</span><span class="p">.</span><span
+                                class="nx">shift</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="nx">sourceBuffer</span><span class="p">.</span><span class="nx">addEventListener</span><span
+                                class="p">(</span><span class="dl">'</span><span class="s1">updateend</span><span
+                                class="dl">'</span><span class="p">,</span> <span class="nx">onUpdateEnd</span><span
+                                class="p">);</span>
+<span class="nx">sourceBuffer</span><span class="p">.</span><span class="nx">appendBuffer</span><span class="p">(</span><span
+                                class="nx">initSegment</span><span class="p">);</span></code></pre>
+                    </figure>
+
+                    <h2 id="whats-next">What’s next</h2>
+
+                    <p>This article showed you how to stream a video with the HTML5 Media Player
+                        instead of the Adobe Flash Player. Now you have some basic tips to help you
+                        creating a video player that is similar to YouTube’s, I really hope they were
+                        useful to you.</p>
+
+                    <p>You can improve it by handling the seeking behavior. You’ll have to retrieve
+                        the current time position, compare to each <em>Cluster</em>’s absolute time code, then
+                        inject the right <em>Media Segment</em> into the <em>Source Buffer</em>.</p>
+
+                    <p>Or even better, you could implement an algorithm that would switch to different
+                        video resolutions and bitrates, depending to the current viewer’s downloading
+                        bandwidth. But that stuff is pretty complicated and depends on many factors.
+                        Rather than writing everything yourself, you should take a look at
+                        <a href="https://github.com/Dash-Industry-Forum/dash.js">the Dash.js library</a> for a
+                        cutting-edge MPEG DASH implementation.</p>
+
+                    <p>Stay tuned for future articles about video streaming and other HTML5 &amp;
+                        JavaScript tips. I’m also in fond of video game development so I will surely
+                        write about that topic later. Feel free to send me any feedback or suggestion
+                        via the comments or <a href="https://twitter.com/aisouard">Twitter</a>!</p>
+
+
+                </section>
+
+                <footer class="page__meta">
+
+
+                    <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong>
+                        <time datetime="2016-05-24T00:00:00+00:00">May 24, 2016</time>
+                    </p>
+
+                </footer>
+
+                <section class="page__share">
+
+                    <h4 class="page__share-title">Share on</h4>
+
+
+                    <a href="https://twitter.com/intent/tweet?via=aisouard&text=Streaming+a+video+with+Media+Source+Extensions%20https%3A%2F%2Faxel.isouard.fr%2Fblog%2F2016%2F05%2F24%2Fstreaming-webm-video-over-html5-with-media-source"
+                       class="btn btn--twitter"
+                       onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+                       title="Share on Twitter"><i class="fab fa-fw fa-twitter"
+                                                   aria-hidden="true"></i><span> Twitter</span></a>
+
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Faxel.isouard.fr%2Fblog%2F2016%2F05%2F24%2Fstreaming-webm-video-over-html5-with-media-source"
+                       class="btn btn--facebook"
+                       onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+                       title="Share on Facebook"><i class="fab fa-fw fa-facebook"
+                                                    aria-hidden="true"></i><span> Facebook</span></a>
+
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Faxel.isouard.fr%2Fblog%2F2016%2F05%2F24%2Fstreaming-webm-video-over-html5-with-media-source"
+                       class="btn btn--linkedin"
+                       onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+                       title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin"
+                                                    aria-hidden="true"></i><span> LinkedIn</span></a>
+                </section>
+
+            </div>
+
+
+            <div class="page__comments">
+
+
+                <h4 class="page__comments-title">Leave a comment</h4>
+                <section id="disqus_thread"></section>
+
+            </div>
+
+
+        </article>
+
+
+        <div class="page__related">
+            <h4 class="page__related-title">You may also enjoy</h4>
+            <div class="grid__wrapper">
+
+
+                <div class="grid__item">
+                    <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+
+                        <div class="archive__item-teaser">
+                            <img src="/assets/images/posts/endless-fake-1/endless-lake-header.png" alt="">
+                        </div>
+
+                        <div class="archive__item-content">
+                            <h2 class="archive__item-title" itemprop="headline">
+
+                                <a href="/blog/2020/07/13/endless-lake-image-recognition-video-games-opencv-python"
+                                   rel="permalink">Image Recognition in Video Games with Python and OpenCV
+                                </a>
+
+                            </h2>
+
+                            <p class="page__meta">
+                                <i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:
+                                <time datetime="2020-07-13">July 13, 2020</time>
+                                - <i class="far fa-clock" aria-hidden="true"></i>
+
+
+                                8 minute read
+
+
+                            </p>
+
+                            <p class="archive__item-excerpt" itemprop="description">Building an Artificial Intelligence
+                                to beat the Endless Lake video game. Let’s gather some data with the image recognition
+                                part with OpenCV and Python, befor...</p>
+                        </div>
+                    </article>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<div class="search-content">
+    <div class="search-content__inner-wrap">
+        <form class="search-content__form" onkeydown="return event.key != 'Enter';">
+            <label class="sr-only" for="search">
+                Enter your search term...
+            </label>
+            <input type="search" id="search" class="search-input" tabindex="-1"
+                   placeholder="Enter your search term..."/>
+        </form>
+        <div id="results" class="results"></div>
+    </div>
+
+</div>
+
+
+<div id="footer" class="page__footer">
+    <footer>
+        <!-- start custom footer snippets -->
+
+        <!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+            <ul class="social-icons">
+
+                <li><strong>Follow:</strong></li>
+
+
+                <li><a href="https://twitter.com/aisouard" rel="nofollow noopener noreferrer"><i
+                        class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+
+
+                <li><a href="https://github.com/aisouard" rel="nofollow noopener noreferrer"><i
+                        class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+
+
+                <li><a href="https://instagram.com/axl.is" rel="nofollow noopener noreferrer"><i
+                        class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+
+
+                <li><a href="https://www.strava.com/athletes/51918519" rel="nofollow noopener noreferrer"><i
+                        class="fab fa-fw fa-strava orange" aria-hidden="true"></i> Strava</a></li>
+
+
+                <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+            </ul>
+        </div>
+
+        <div class="page__footer-copyright">&copy; 2020 Axel Isouard. Powered by <a href="https://jekyllrb.com"
+                                                                                    rel="nofollow">Jekyll</a> &amp; <a
+                href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.
+        </div>
+
+    </footer>
+</div>
+
+
+<script src="/assets/js/main.min.js"></script>
+<script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+<script>
+    window.ga = function () {
+        ga.q.push(arguments)
+    };
+    ga.q = [];
+    ga.l = +new Date;
+    ga('create', 'UA-172665064-1', 'auto');
+    ga('set', 'anonymizeIp', false);
+    ga('send', 'pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async></script>
+
+
+<script>
+    var disqus_config = function () {
+        this.page.url = "https://axel.isouard.fr/blog/2016/05/24/streaming-webm-video-over-html5-with-media-source";  /* Replace PAGE_URL with your page's canonical URL variable */
+        this.page.identifier = "/blog/2016/05/24/streaming-webm-video-over-html5-with-media-source"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function () { /* DON'T EDIT BELOW THIS LINE */
+        var d = document, s = d.createElement('script');
+        s.src = 'https://aisouard.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+</body>
+</html>

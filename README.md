@@ -13,6 +13,7 @@ Penetration testing
 
 
 Found issues:
+---------------
 
   1.Create new Checkin entry. Does not work, even if correct input is provided. 
 Error: Internal Server Error

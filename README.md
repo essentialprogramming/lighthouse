@@ -1,4 +1,4 @@
-# lighthouse
+# Lighthouse
 
 Equivalence & Boundary Testing
 

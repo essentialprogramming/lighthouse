@@ -23,9 +23,9 @@ Error: Internal Server Error
   2. Create a visitor account. Delete the visitor account. Try to create a visitor account with the same email.
 
 
-Expected : A visitor account is created.
+        Expected : A visitor account is created.
 
-Actual : Internal Server Error. 
+        Actual : Internal Server Error. 
 
   3. Update desk position fails most of the time. 
 

@@ -196,14 +196,14 @@ public class LightHouseTest {
                 header("Authorization",  accessToken).
                 param("from", LocalDate.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE)).
                 param("to",   LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE)).
-                when().
+        when().
                 get("/v1/checkins").
-                then().
+        then().
                 assertThat().
                 statusCode(HttpStatus.OK.value()).
-                and().
+        and().
                 contentType(ContentType.JSON).
-                and().
+        and().
                 body("data.keySet()", everyItem(greaterThanOrEqualTo(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))).
                 body("data.keySet()", everyItem(lessThanOrEqualTo( LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))).
                 log().all();

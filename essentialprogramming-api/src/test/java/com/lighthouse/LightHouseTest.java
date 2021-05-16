@@ -163,6 +163,74 @@ public class LightHouseTest {
 
 
     @Test
+    public void create_visitor_account_delete_recreate() {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Creating Node that maps to JSON Object structures in JSON content
+        ObjectNode userDetails = objectMapper.createObjectNode();
+
+        final String email = NanoIdUtils.randomNanoId()+"@stud.ubbcluj.ro";
+        userDetails.put("username",email );
+        userDetails.put("first_name", "Test");
+        userDetails.put("last_name", "User");
+        userDetails.put("email", email);
+
+        Integer id;
+
+        RestAssured.basePath = "/api";
+        id = given().
+                accept(ContentType.JSON).
+                contentType(ContentType.JSON).
+                header("Authorization",  accessToken).
+                body(userDetails).
+        when().
+                post("/v1/users").
+        then().
+                assertThat().
+                statusCode(HttpStatus.CREATED.value()).
+        and().
+                contentType(ContentType.JSON).
+        and().
+                body("email", equalTo(email)).
+        log().all().
+        extract().path("id");
+
+
+
+
+        given().
+                accept(ContentType.JSON).
+                contentType(ContentType.JSON).
+                header("Authorization",  accessToken).
+                when().
+                delete("/v1/users/" + id).
+                then().
+                assertThat().
+                statusCode(HttpStatus.OK.value());
+
+
+        given().
+                accept(ContentType.JSON).
+                contentType(ContentType.JSON).
+                header("Authorization",  accessToken).
+                body(userDetails).
+        when().
+                post("/v1/users").
+        then().
+                assertThat().
+                statusCode(HttpStatus.CREATED.value()).
+        and().
+                contentType(ContentType.JSON).
+        and().
+                body("email", equalTo(email)).
+        log().all().
+        extract().path("id");
+
+    }
+
+
+    @Test
     public void retrieve_checkin_data_for_a_specific_date_range_boundary_test() {
         RestAssured.basePath = "/api";
 

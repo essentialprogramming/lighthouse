@@ -55,6 +55,8 @@ Error: Internal Server Error
      See more: 
          https://portswigger.net/web-security/cors/access-control-allow-origin
          
-   ![Load Test Result](load-test/Load Test - Summary Report.png)
+ ### Load Test Results
+ 
+   ![Load Test Results](load-test/LoadTest-Summary-Report.png)
 
 
